@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<style>
+    .listc{
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+</style>
+<body>
+    <input name="file" id="files" type="file">
+    <input onclick="submit()" type="button" value="上传">
+    <div class="listc" th:each="prod : ${list}">
+        <span th:text="${prod}" onclick="hrefThis(this)"></span>
+    </div>
+</body>
+<script>
+    function hrefThis(obj) {
+        var v = obj.innerHTML;
+        window.location.href = "http://localhost:15173/index/down?path="+v;
+    }
+
+    function submit() {
+        var file = document.getElementById('files').files[0];
+        var formData = new FormData();
+        formData.append("file", file);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('post','http://localhost:15173/index/up',true);
+        xhr.upload.addEventListener('progress',function(result){
+            if(result.lengthComputable){
+                //进度
+                var percent = (result.loaded / result.total * 100).toFixed(0);
+                if(percent == 100){
+                    alert("上传成功");
+                    window.location.reload();
+                }
+            }
+        },false);
+        xhr.addEventListener("readystatechange",function(){
+        });
+        xhr.send(formData);
+    }
+</script>
+</html>
